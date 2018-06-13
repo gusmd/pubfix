@@ -2,6 +2,7 @@
 #include "ui_MainWindow.h"
 
 #include <QMessageBox>
+#include <QtGlobal>
 
 #include <tlhelp32.h>
 
@@ -14,11 +15,18 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    ui->exeEdit->setText("TslGame.exe");
+    for (auto &button : { ui->allCoresButton, ui->singleCoreButton, ui->findButton }) {
+        button->setEnabled(false);
+    }
 
     connect(ui->singleCoreButton, &QPushButton::released, this, &MainWindow::setToCPU0);
     connect(ui->allCoresButton, &QPushButton::released, this, &MainWindow::setToAllCPU);
     connect(ui->findButton, &QPushButton::released, this, &MainWindow::findPID);
+
+    connect(ui->exeEdit, &QLineEdit::textChanged, this, &MainWindow::updateExeButtonState);
+    connect(ui->pidSpinBox, QOverload<int>::of(&QSpinBox::valueChanged), this, &MainWindow::updateCoreButtonsState);
+
+    ui->exeEdit->setText("TslGame.exe");
 }
 
 MainWindow::~MainWindow()
@@ -112,6 +120,17 @@ void MainWindow::findPID()
     }
 
     CloseHandle(snapshot);
+}
+
+void MainWindow::updateExeButtonState(const QString &text)
+{
+    ui->findButton->setEnabled(!text.isEmpty());
+}
+
+void MainWindow::updateCoreButtonsState(int value)
+{
+    ui->allCoresButton->setEnabled(value != 0);
+    ui->singleCoreButton->setEnabled(value != 0);
 }
 
 HANDLE MainWindow::getHandle() const

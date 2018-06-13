@@ -21,6 +21,9 @@ private slots:
     void setToAllCPU();
     void findPID();
 
+    void updateExeButtonState(const QString &text);
+    void updateCoreButtonsState(int value);
+
 private:
     Ui::MainWindow *ui;
 
