@@ -8,20 +8,23 @@ namespace Ui {
 class MainWindow;
 }
 
-class MainWindow : public QMainWindow {
-  Q_OBJECT
+class MainWindow : public QMainWindow
+{
+    Q_OBJECT
 
 public:
-  explicit MainWindow(QWidget *parent = 0);
-  ~MainWindow();
+    explicit MainWindow(QWidget *parent = 0);
+    ~MainWindow();
 
-public slots:
-  void setToCPU0();
-  void setToAllCPU();
+private slots:
+    void setToCPU0();
+    void setToAllCPU();
+    void findPID();
 
 private:
-  Ui::MainWindow *ui;
+    Ui::MainWindow *ui;
 
-  HANDLE getHandleFromPID(int PID, DWORD accessRights = PROCESS_ALL_ACCESS);
-  void setAffinity(HANDLE h, DWORD_PTR mask);
+    HANDLE getHandle() const;
+    HANDLE getHandleFromPID(int PID, DWORD accessRights = PROCESS_ALL_ACCESS) const;
+    void setAffinity(HANDLE h, DWORD_PTR mask) const;
 };

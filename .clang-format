@@ -1,0 +1,27 @@
+BasedOnStyle: "WebKit"
+AlignAfterOpenBracket: 'true'
+AlignTrailingComments: 'true'
+AllowShortIfStatementsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: "None"
+AllowShortLoopsOnASingleLine: false
+BreakConstructorInitializersBeforeComma: true
+BreakBeforeBraces: "Custom"
+BraceWrapping: {
+    AfterClass: 'true'
+    AfterControlStatement: 'false'
+    AfterEnum : 'false'
+    AfterFunction : 'true'
+    AfterNamespace : 'false'
+    AfterStruct : 'false'
+    AfterUnion : 'false'
+    BeforeCatch : 'false'
+    BeforeElse : 'false'
+    IndentBraces : 'false'
+}
+ColumnLimit: 100
+IndentCaseLabels: false
+IndentFunctionDeclarationAfterType: false
+MaxEmptyLinesToKeep: 1
+PointerAlignment: "Right"
+Standard: "Cpp11"
+UseTab: Never
