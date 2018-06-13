@@ -99,7 +99,7 @@ void MainWindow::findPID()
                 auto pid = entry.th32ProcessID;
                 CloseHandle(hProcess);
 
-                ui->pidEdit->setText(QString::number(pid));
+                ui->pidSpinBox->setValue(pid);
 
                 found = true;
             }
@@ -116,7 +116,7 @@ void MainWindow::findPID()
 
 HANDLE MainWindow::getHandle() const
 {
-    return getHandleFromPID(ui->pidEdit->text().toInt());
+    return getHandleFromPID(ui->pidSpinBox->value());
 }
 
 HANDLE MainWindow::getHandleFromPID(int PID, DWORD accessRights) const
