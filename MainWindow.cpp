@@ -2,6 +2,7 @@
 #include "ui_MainWindow.h"
 
 #include <QMessageBox>
+#include <QTimer>
 #include <QtGlobal>
 
 #include <tlhelp32.h>
@@ -12,6 +13,7 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
+    , m_timer(new QTimer(this))
 {
     ui->setupUi(this);
 
@@ -21,10 +23,13 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(ui->singleCoreButton, &QPushButton::released, this, &MainWindow::setToCPU0);
     connect(ui->allCoresButton, &QPushButton::released, this, &MainWindow::setToAllCPU);
-    connect(ui->findButton, &QPushButton::released, this, &MainWindow::findPID);
+
+    connect(m_timer, &QTimer::timeout, this, &MainWindow::findPID);
+    connect(ui->findButton, &QPushButton::released, this, &MainWindow::toggleMonitor);
 
     connect(ui->exeEdit, &QLineEdit::textChanged, this, &MainWindow::updateExeButtonState);
-    connect(ui->pidSpinBox, QOverload<int>::of(&QSpinBox::valueChanged), this, &MainWindow::updateCoreButtonsState);
+    connect(ui->pidSpinBox, QOverload<int>::of(&QSpinBox::valueChanged), this,
+            &MainWindow::updateCoreButtonsState);
 
     ui->exeEdit->setText("TslGame.exe");
 }
@@ -32,6 +37,18 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::toggleMonitor()
+{
+    if (m_timer->isActive()) {
+        m_timer->stop();
+        ui->findButton->setText("Start Monitoring");
+        ui->statusLabel->setText("Not Monitoring");
+    } else {
+        m_timer->start(1000);
+        ui->findButton->setText("Stop Monitoring");
+    }
 }
 
 void MainWindow::setToCPU0()
@@ -108,6 +125,7 @@ void MainWindow::findPID()
                 CloseHandle(hProcess);
 
                 ui->pidSpinBox->setValue(pid);
+                ui->statusLabel->setText("Found!");
 
                 found = true;
             }
@@ -115,8 +133,8 @@ void MainWindow::findPID()
     }
 
     if (!found) {
-        QMessageBox::critical(this, "Find process PID",
-                              "Could not find a process with the provided name.");
+        ui->statusLabel->setText("Monitoring...");
+        ui->pidSpinBox->setValue(0);
     }
 
     CloseHandle(snapshot);

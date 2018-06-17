@@ -4,6 +4,8 @@
 
 #include <Windows.h>
 
+class QTimer;
+
 namespace Ui {
 class MainWindow;
 }
@@ -17,6 +19,7 @@ public:
     ~MainWindow();
 
 private slots:
+    void toggleMonitor();
     void setToCPU0();
     void setToAllCPU();
     void findPID();
@@ -26,6 +29,8 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
+
+    QTimer *m_timer;
 
     HANDLE getHandle() const;
     HANDLE getHandleFromPID(int PID, DWORD accessRights = PROCESS_ALL_ACCESS) const;
