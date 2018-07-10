@@ -3,6 +3,8 @@ project(pubfix)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
+add_subdirectory(QHotkey)
+
 add_executable(pubfix main.cpp MainWindow.h MainWindow.cpp)
 
 set_target_properties(pubfix
@@ -13,7 +15,7 @@ set_target_properties(pubfix
 
 find_package(Qt5Widgets)
 
-target_link_libraries(pubfix Qt5::Widgets)
+target_link_libraries(pubfix Qt5::Widgets QHotkey)
 
 install(TARGETS pubfix
         ARCHIVE
