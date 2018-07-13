@@ -1,11 +1,12 @@
 cmake_minimum_required(VERSION 3.2)
 project(pubfix)
 
-add_executable(pubfix main.cpp MainWindow.h MainWindow.cpp)
+add_executable(pubfix main.cpp MainWindow.h MainWindow.cpp ../QDarkStyleSheet/qdarkstyle/style.qrc)
 
 set_target_properties(pubfix
     PROPERTIES
     AUTOMOC ON
+    AUTORCC ON
     AUTOUIC ON
 )
 

@@ -2,3 +2,6 @@
 	path = QHotkey
 	url = git@github.com:gusmd/QHotkey.git
 	branch = cmake_support
+[submodule "QDarkStyleSheet"]
+	path = QDarkStyleSheet
+	url = git@github.com:ColinDuquesnoy/QDarkStyleSheet.git
