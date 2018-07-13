@@ -5,6 +5,8 @@
 #include <QTimer>
 #include <QtGlobal>
 
+#include <QHotkey>
+
 #include <tlhelp32.h>
 
 #include <bitset>
@@ -20,6 +22,22 @@ MainWindow::MainWindow(QWidget *parent)
     for (auto &button : { ui->allCoresButton, ui->singleCoreButton, ui->findButton }) {
         button->setEnabled(false);
     }
+
+    // Initialize hotkeys to default values
+    m_singleHotkey = new QHotkey(ui->singleCoreKeyEdit->keySequence(),
+                                 ui->hotkeyGroupBox->isChecked(), QApplication::instance());
+    m_allCoresHotkey = new QHotkey(ui->allCoresKeyEdit->keySequence(),
+                                   ui->hotkeyGroupBox->isChecked(), QApplication::instance());
+
+    connect(ui->singleCoreKeyEdit, &QKeySequenceEdit::keySequenceChanged, this,
+            &MainWindow::updateSingleCoreSequence);
+    connect(ui->allCoresKeyEdit, &QKeySequenceEdit::keySequenceChanged, this,
+            &MainWindow::updateAllCoresSequence);
+
+    connect(ui->hotkeyGroupBox, &QGroupBox::toggled, this, &MainWindow::updateHotkeysState);
+
+    connect(m_singleHotkey, &QHotkey::activated, this, &MainWindow::setToCPU0);
+    connect(m_allCoresHotkey, &QHotkey::activated, this, &MainWindow::setToAllCPU);
 
     connect(ui->singleCoreButton, &QPushButton::released, this, &MainWindow::setToCPU0);
     connect(ui->allCoresButton, &QPushButton::released, this, &MainWindow::setToAllCPU);
@@ -53,6 +71,11 @@ void MainWindow::toggleMonitor()
 
 void MainWindow::setToCPU0()
 {
+    if (ui->pidSpinBox->value() == 0) {
+        std::cout << "Invalid PID." << std::endl;
+        return;
+    }
+
     auto process = getHandle();
     DWORD_PTR processAffinityMask;
     DWORD_PTR systemAffinityMask;
@@ -82,6 +105,11 @@ void MainWindow::setToCPU0()
 
 void MainWindow::setToAllCPU()
 {
+    if (ui->pidSpinBox->value() == 0) {
+        std::cout << "Invalid PID." << std::endl;
+        return;
+    }
+
     auto process = getHandle();
     DWORD_PTR processAffinityMask;
     DWORD_PTR systemAffinityMask;
@@ -149,6 +177,23 @@ void MainWindow::updateCoreButtonsState(int value)
 {
     ui->allCoresButton->setEnabled(value != 0);
     ui->singleCoreButton->setEnabled(value != 0);
+}
+
+void MainWindow::updateHotkeysState(bool checked)
+{
+    for (auto hotkey : { m_singleHotkey, m_allCoresHotkey }) {
+        hotkey->setRegistered(checked);
+    }
+}
+
+void MainWindow::updateSingleCoreSequence(const QKeySequence &sequence)
+{
+    m_singleHotkey->setShortcut(sequence, ui->hotkeyGroupBox->isChecked());
+}
+
+void MainWindow::updateAllCoresSequence(const QKeySequence &sequence)
+{
+    m_allCoresHotkey->setShortcut(sequence, ui->hotkeyGroupBox->isChecked());
 }
 
 HANDLE MainWindow::getHandle() const

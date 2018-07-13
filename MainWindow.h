@@ -5,6 +5,7 @@
 #include <Windows.h>
 
 class QTimer;
+class QHotkey;
 
 namespace Ui {
 class MainWindow;
@@ -27,10 +28,16 @@ private slots:
     void updateExeButtonState(const QString &text);
     void updateCoreButtonsState(int value);
 
+    void updateHotkeysState(bool checked);
+    void updateSingleCoreSequence(const QKeySequence &sequence);
+    void updateAllCoresSequence(const QKeySequence &sequence);
+
 private:
     Ui::MainWindow *ui;
 
     QTimer *m_timer;
+    QHotkey *m_singleHotkey;
+    QHotkey *m_allCoresHotkey;
 
     HANDLE getHandle() const;
     HANDLE getHandleFromPID(int PID, DWORD accessRights = PROCESS_ALL_ACCESS) const;
