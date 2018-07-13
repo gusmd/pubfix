@@ -1,0 +1,4 @@
+[submodule "QHotkey"]
+	path = QHotkey
+	url = git@github.com:gusmd/QHotkey.git
+	branch = cmake_support
