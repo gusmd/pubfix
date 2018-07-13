@@ -1,27 +1,11 @@
 cmake_minimum_required(VERSION 3.2)
-project(pubfix)
+project(pubfix_main)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 add_subdirectory(QHotkey)
+add_subdirectory(pubfix)
 
-add_executable(pubfix main.cpp MainWindow.h MainWindow.cpp)
-
-set_target_properties(pubfix
-    PROPERTIES
-    AUTOMOC ON
-    AUTOUIC ON
-)
-
-find_package(Qt5Widgets)
-
-target_link_libraries(pubfix Qt5::Widgets QHotkey)
-
-install(TARGETS pubfix
-        ARCHIVE
-        RUNTIME DESTINATION .
-        COMPONENT pubfix
-)
 # Grab Qt and MSVC dlls
 include(GetDependencies)
 GetDependencies(TARGET pubfix)
