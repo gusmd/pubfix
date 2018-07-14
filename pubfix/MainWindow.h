@@ -37,7 +37,7 @@ private:
 
     QTimer *m_timer;
     QHotkey *m_singleHotkey;
-    QHotkey *m_allCoresHotkey;
+    QHotkey *m_allHotkey;
 
     HANDLE getHandle() const;
     HANDLE getHandleFromPID(int PID, DWORD accessRights = PROCESS_ALL_ACCESS) const;

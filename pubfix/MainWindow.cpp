@@ -2,6 +2,7 @@
 #include "ui_MainWindow.h"
 
 #include <QMessageBox>
+#include <QSettings>
 #include <QTimer>
 #include <QtGlobal>
 
@@ -11,6 +12,9 @@
 
 #include <bitset>
 #include <iostream>
+
+static constexpr char *single_key = "single_key";
+static constexpr char *all_key = "all_key";
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -23,11 +27,21 @@ MainWindow::MainWindow(QWidget *parent)
         button->setEnabled(false);
     }
 
-    // Initialize hotkeys to default values
-    m_singleHotkey = new QHotkey(ui->singleCoreKeyEdit->keySequence(),
-                                 ui->hotkeyGroupBox->isChecked(), QApplication::instance());
-    m_allCoresHotkey = new QHotkey(ui->allCoresKeyEdit->keySequence(),
-                                   ui->hotkeyGroupBox->isChecked(), QApplication::instance());
+    // Initialize hotkeys to default or stored values
+    QSettings settings("gusmd", "pubfix");
+    const QKeySequence singleKey = QKeySequence::fromString(
+        settings.value(single_key, ui->singleCoreKeyEdit->keySequence().toString()).toString());
+    const QKeySequence allKey = QKeySequence::fromString(
+        settings.value(all_key, ui->allCoresKeyEdit->keySequence().toString()).toString());
+
+    // Set value on fields
+    ui->singleCoreKeyEdit->setKeySequence(singleKey);
+    ui->allCoresKeyEdit->setKeySequence(allKey);
+
+    // Create QHotkey objects
+    m_singleHotkey
+        = new QHotkey(singleKey, ui->hotkeyGroupBox->isChecked(), QApplication::instance());
+    m_allHotkey = new QHotkey(allKey, ui->hotkeyGroupBox->isChecked(), QApplication::instance());
 
     connect(ui->singleCoreKeyEdit, &QKeySequenceEdit::keySequenceChanged, this,
             &MainWindow::updateSingleCoreSequence);
@@ -37,7 +51,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->hotkeyGroupBox, &QGroupBox::toggled, this, &MainWindow::updateHotkeysState);
 
     connect(m_singleHotkey, &QHotkey::activated, this, &MainWindow::setToCPU0);
-    connect(m_allCoresHotkey, &QHotkey::activated, this, &MainWindow::setToAllCPU);
+    connect(m_allHotkey, &QHotkey::activated, this, &MainWindow::setToAllCPU);
 
     connect(ui->singleCoreButton, &QPushButton::released, this, &MainWindow::setToCPU0);
     connect(ui->allCoresButton, &QPushButton::released, this, &MainWindow::setToAllCPU);
@@ -181,19 +195,23 @@ void MainWindow::updateCoreButtonsState(int value)
 
 void MainWindow::updateHotkeysState(bool checked)
 {
-    for (auto hotkey : { m_singleHotkey, m_allCoresHotkey }) {
+    for (auto hotkey : { m_singleHotkey, m_allHotkey }) {
         hotkey->setRegistered(checked);
     }
 }
 
 void MainWindow::updateSingleCoreSequence(const QKeySequence &sequence)
 {
+    // Store new sequence in settings
+    QSettings("gusmd", "pubfix").setValue(single_key, sequence.toString());
     m_singleHotkey->setShortcut(sequence, ui->hotkeyGroupBox->isChecked());
 }
 
 void MainWindow::updateAllCoresSequence(const QKeySequence &sequence)
 {
-    m_allCoresHotkey->setShortcut(sequence, ui->hotkeyGroupBox->isChecked());
+    // Store new sequence in settings
+    QSettings("gusmd", "pubfix").setValue(all_key, sequence.toString());
+    m_allHotkey->setShortcut(sequence, ui->hotkeyGroupBox->isChecked());
 }
 
 HANDLE MainWindow::getHandle() const
