@@ -32,6 +32,8 @@ private slots:
     void updateSingleCoreSequence(const QKeySequence &sequence);
     void updateAllCoresSequence(const QKeySequence &sequence);
 
+    void logMessage(const QString &msg);
+
 private:
     Ui::MainWindow *ui;
 

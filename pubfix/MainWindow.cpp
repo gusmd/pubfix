@@ -11,10 +11,9 @@
 #include <tlhelp32.h>
 
 #include <bitset>
-#include <iostream>
 
-static constexpr char *single_key = "single_key";
-static constexpr char *all_key = "all_key";
+static constexpr const char *single_key = "single_key";
+static constexpr const char *all_key = "all_key";
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -86,7 +85,7 @@ void MainWindow::toggleMonitor()
 void MainWindow::setToCPU0()
 {
     if (ui->pidSpinBox->value() == 0) {
-        std::cout << "Invalid PID." << std::endl;
+        logMessage("Invalid PID.");
         return;
     }
 
@@ -95,32 +94,30 @@ void MainWindow::setToCPU0()
     DWORD_PTR systemAffinityMask;
 
     if (!GetProcessAffinityMask(process, &processAffinityMask, &systemAffinityMask)) {
-        std::cout << "Could not retrieve process affinity mask. Make sure PID is correct."
-                  << std::endl;
-        std::cout << "Error code:" << GetLastError() << std::endl;
+        logMessage("Could not retrieve affinity masks. Make sure PID is correct.");
+        logMessage("Error code: " + QString::number(GetLastError()));
         return;
     }
 
     DWORD_PTR singleCoreMask = 1;
 
-    std::cout << processAffinityMask << std::endl;
-    std::cout << systemAffinityMask << std::endl;
-    std::cout << "Current affinity mask: " << std::bitset<64>(processAffinityMask) << std::endl;
-    std::cout << "Setting to: " << std::bitset<64>(singleCoreMask) << std::endl;
+    logMessage("Current mask: "
+               + QString::fromStdString(std::bitset<32>(processAffinityMask).to_string()));
+    logMessage("Setting to: "
+               + QString::fromStdString(std::bitset<32>(singleCoreMask).to_string()));
 
     if (!SetProcessAffinityMask(process, singleCoreMask)) {
-        std::cout << "Could not modify process affinity mask. Make sure PID is correct."
-                  << std::endl;
-        std::cout << "Error code:" << GetLastError() << std::endl;
+        logMessage("Could not modify process affinity mask. Make sure PID is correct.");
+        logMessage("Error code: " + QString::number(GetLastError()));
         return;
     }
-    std::cout << "Done!" << std::endl;
+    logMessage("Done!");
 }
 
 void MainWindow::setToAllCPU()
 {
     if (ui->pidSpinBox->value() == 0) {
-        std::cout << "Invalid PID." << std::endl;
+        logMessage("Invalid PID.");
         return;
     }
 
@@ -129,24 +126,22 @@ void MainWindow::setToAllCPU()
     DWORD_PTR systemAffinityMask;
 
     if (!GetProcessAffinityMask(process, &processAffinityMask, &systemAffinityMask)) {
-        std::cout << "Could not retrieve process affinity mask. Make sure PID is correct."
-                  << std::endl;
-        std::cout << "Error code:" << GetLastError() << std::endl;
+        logMessage("Could not retrieve affinity masks. Make sure PID is correct.");
+        logMessage("Error code: " + QString::number(GetLastError()));
         return;
     }
 
-    std::cout << processAffinityMask << std::endl;
-    std::cout << systemAffinityMask << std::endl;
-    std::cout << "Current affinity mask: " << std::bitset<64>(processAffinityMask) << std::endl;
-    std::cout << "Setting to: " << std::bitset<64>(systemAffinityMask) << std::endl;
+    logMessage("Current mask: "
+               + QString::fromStdString(std::bitset<32>(processAffinityMask).to_string()));
+    logMessage("Setting to: "
+               + QString::fromStdString(std::bitset<32>(systemAffinityMask).to_string()));
 
     if (!SetProcessAffinityMask(process, systemAffinityMask)) {
-        std::cout << "Could not modify process affinity mask. Make sure PID is correct."
-                  << std::endl;
-        std::cout << "Error code:" << GetLastError() << std::endl;
+        logMessage("Could not modify process affinity mask. Make sure PID is correct.");
+        logMessage("Error code: " + QString::number(GetLastError()));
         return;
     }
-    std::cout << "Done!" << std::endl;
+    logMessage("Done!");
 }
 
 void MainWindow::findPID()
@@ -212,6 +207,13 @@ void MainWindow::updateAllCoresSequence(const QKeySequence &sequence)
     // Store new sequence in settings
     QSettings("gusmd", "pubfix").setValue(all_key, sequence.toString());
     m_allHotkey->setShortcut(sequence, ui->hotkeyGroupBox->isChecked());
+}
+
+void MainWindow::logMessage(const QString &msg)
+{
+    ui->logEdit->moveCursor(QTextCursor::End);
+    ui->logEdit->insertPlainText(msg + "\n");
+    ui->logEdit->moveCursor(QTextCursor::End);
 }
 
 HANDLE MainWindow::getHandle() const
