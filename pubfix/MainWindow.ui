@@ -16,7 +16,7 @@
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
-     <layout class="QGridLayout" name="gridLayout_2" columnstretch="1,1,1">
+     <layout class="QGridLayout" name="gridLayout_2" rowstretch="0,0,0,0,0,0,0,0,0,1" columnstretch="1,1,1">
       <item row="9" column="0" colspan="3">
        <widget class="QPlainTextEdit" name="logEdit">
         <property name="lineWrapMode">
@@ -32,10 +32,13 @@
         <property name="orientation">
          <enum>Qt::Vertical</enum>
         </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Fixed</enum>
+        </property>
         <property name="sizeHint" stdset="0">
          <size>
-          <width>20</width>
-          <height>40</height>
+          <width>0</width>
+          <height>10</height>
          </size>
         </property>
        </spacer>
@@ -68,10 +71,13 @@
         <property name="orientation">
          <enum>Qt::Vertical</enum>
         </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Fixed</enum>
+        </property>
         <property name="sizeHint" stdset="0">
          <size>
-          <width>20</width>
-          <height>40</height>
+          <width>0</width>
+          <height>10</height>
          </size>
         </property>
        </spacer>
@@ -171,6 +177,17 @@
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <tabstops>
+  <tabstop>exeEdit</tabstop>
+  <tabstop>findButton</tabstop>
+  <tabstop>pidSpinBox</tabstop>
+  <tabstop>singleCoreButton</tabstop>
+  <tabstop>allCoresButton</tabstop>
+  <tabstop>hotkeyGroupBox</tabstop>
+  <tabstop>singleCoreKeyEdit</tabstop>
+  <tabstop>allCoresKeyEdit</tabstop>
+  <tabstop>logEdit</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
