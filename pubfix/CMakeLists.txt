@@ -8,11 +8,11 @@ set_target_properties(pubfix
     AUTOMOC ON
     AUTORCC ON
     AUTOUIC ON
+    LINK_FLAGS_RELEASE "/SUBSYSTEM:WINDOWS"
 )
 
-find_package(Qt5Widgets)
-
-target_link_libraries(pubfix Qt5::Widgets QHotkey)
+find_package(Qt5 COMPONENTS Core Widgets REQUIRED)
+target_link_libraries(pubfix Qt5::WinMain QHotkey)
 
 install(TARGETS pubfix
         ARCHIVE
