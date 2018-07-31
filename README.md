@@ -4,6 +4,8 @@ On many PC configurations (such as overclocked Ryzen systems), PUBG will crash w
 
 Tired of doing that manually, I wrote this little tool.
 
+Note: Some users report that updating their BIOS to the latest available AGESA version fixed the problem. You should try that before resorting to using this tool.
+
 ## Usage
 
 For launching PUBG:
